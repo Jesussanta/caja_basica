@@ -7,6 +7,7 @@ from tkinter import ttk
 class Ventana(Frame):
        
     def __init__(self, master=None):
+        super().__init__(master,width=700, height=260)
         self.master = master
         self.pack()
         self.create_widgets()
@@ -29,12 +30,14 @@ class Ventana(Frame):
     def create_widgets(self):
         frame1 = Frame(self, bg="#0F5C8C")
         frame1.place(x=0,y=0,width=93, height=259)        
-        self.btnNuevo=Button(frame1,text="Nuevo", command=self.fNuevo, bg="#17A0BF", fg="white",relief=FLAT )
+        self.btnNuevo=Button(frame1,text="Añadir", command=self.fNuevo, bg="#0F5C8C", fg="white",relief=FLAT, )
         self.btnNuevo.place(x=5,y=50,width=80, height=30 )        
-        self.btnModificar=Button(frame1,text="Modificar", command=self.fModificar, bg="#17A0BF", fg="white",relief=FLAT)
+        self.btnModificar=Button(frame1,text="Modificar", command=self.fModificar, bg="#0F5C8C", fg="white",relief=FLAT)
         self.btnModificar.place(x=5,y=90,width=80, height=30)                
-        self.btnEliminar=Button(frame1,text="Eliminar", command=self.fEliminar, bg="#17A0BF", fg="white",relief=FLAT)
+        self.btnEliminar=Button(frame1,text="Eliminar", command=self.fEliminar, bg="#0F5C8C", fg="white",relief=FLAT)
         self.btnEliminar.place(x=5,y=130,width=80, height=30)        
+        self.btnEliminar=Button(frame1,text="Explorar", command=self.fEliminar, bg="#0F5C8C", fg="white",relief=FLAT)
+        self.btnEliminar.place(x=5,y=200,width=80, height=30)
 
         frame2 = Frame(self,bg="#45BFB3" )
         frame2.place(x=93,y=0,width=150, height=259)                        
