@@ -1,16 +1,15 @@
 import mysql.connector
 
-class Countries:
+class Client:
 
     def __init__(self):
         self.cnn = mysql.connector.connect(host="localhost", user="root", 
         passwd="45237823", database="compradores")
 
     def __str__(self):
-        datos=self.consulta_paises()        
+        datos=self.consulta()        
         aux=""
-        for row in datos:
-            aux=aux + str(row) + "\n"
+       
         return aux
         
     def consulta (self):

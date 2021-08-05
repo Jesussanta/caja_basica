@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import ttk
-
+from compradores import * 
 
     
 
 class Ventana(Frame):
+    
+    Seller = Client()
        
     def __init__(self, master=None):
         super().__init__(master,width=700, height=260)
@@ -12,31 +14,40 @@ class Ventana(Frame):
         self.pack()
         self.create_widgets()
         
-    def fNuevo(self):         
+    def bAdd(self):         
         pass
     
-    def fGuardar(self):        
+    def bSave(self):        
         pass
                  
-    def fModificar(self):        
+    def bChan(self):        
         pass
     
-    def fEliminar(self):
+    def bDelet(self):
         pass
 
-    def fCancelar(self):
+    def bCancel(self):
+        pass
+
+    def bShow(self):
+
+        datos = self.Seller.consulta()
+        for row in datos:
+            self.grid.insert("",END, text= row[0], values=(row[1],row[2],row[3]))
+
         pass
 
     def create_widgets(self):
         frame1 = Frame(self, bg="#0F5C8C")
         frame1.place(x=0,y=0,width=93, height=259)        
-        self.btnNuevo=Button(frame1,text="Añadir", command=self.fNuevo, bg="#0F5C8C", fg="white",relief=FLAT, )
+
+        self.btnNuevo=Button(frame1,text="Añadir", command=self.bAdd, bg="#0F5C8C", fg="white",relief=FLAT, )
         self.btnNuevo.place(x=5,y=50,width=80, height=30 )        
-        self.btnModificar=Button(frame1,text="Modificar", command=self.fModificar, bg="#0F5C8C", fg="white",relief=FLAT)
+        self.btnModificar=Button(frame1,text="Modificar", command=self.bChan, bg="#0F5C8C", fg="white",relief=FLAT)
         self.btnModificar.place(x=5,y=90,width=80, height=30)                
-        self.btnEliminar=Button(frame1,text="Eliminar", command=self.fEliminar, bg="#0F5C8C", fg="white",relief=FLAT)
+        self.btnEliminar=Button(frame1,text="Eliminar", command=self.bDelet, bg="#0F5C8C", fg="white",relief=FLAT)
         self.btnEliminar.place(x=5,y=130,width=80, height=30)        
-        self.btnEliminar=Button(frame1,text="Explorar", command=self.fEliminar, bg="#0F5C8C", fg="white",relief=FLAT)
+        self.btnEliminar=Button(frame1,text="Explorar", command=self.bShow, bg="#0F5C8C", fg="white",relief=FLAT)
         self.btnEliminar.place(x=5,y=200,width=80, height=30)
 
         frame2 = Frame(self,bg="#45BFB3" )
@@ -57,9 +68,9 @@ class Ventana(Frame):
         self.txtCapital=Entry(frame2)
         self.txtCapital.place(x=3,y=125,width=100, height=20)        
           
-        self.btnGuardar=Button(frame2,text="Guardar", command=self.fGuardar, bg="#7CA653", fg="white")
-        self.btnGuardar.place(x=10,y=160,width=60, height=30)
-        self.btnCancelar=Button(frame2,text="Cancelar", command=self.fCancelar, bg="#F2913D", fg="white")
+        self.btnGuardar=Button(frame2,text="Guardar", command=self.bSave, bg="#7CA653", fg="white")
+        self.btnGuardar.place(x=10,y=160,width=60, height=30)        
+        self.btnCancelar=Button(frame2,text="Cancelar", command=self.bCancel, bg="#F2913D", fg="white")
         self.btnCancelar.place(x=80,y=160,width=60, height=30)        
 
 
