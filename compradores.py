@@ -45,9 +45,10 @@ class Client:
         cur.close()
         return n   
 
-    def modifica (self, ID, Nombre, Valor ):
+    def modifica (self, ID,Valor ):
         cur = self.cnn.cursor()
-        sql='''UPDATE s1 SET ID='{}', Nombre='{}', Valor='{}', WHERE ID={}'''.format( ID, Nombre, Valor)
+        
+        sql='''UPDATE `s1` SET `Valor` = '{}' WHERE `ID`= {}'''.format(Valor,ID)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
