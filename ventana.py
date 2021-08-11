@@ -1,6 +1,7 @@
 from logging import disable
 from tkinter import *
 from tkinter import ttk
+from fpdf import FPDF
 from compradores import * 
 
     
@@ -81,13 +82,45 @@ class Ventana(Frame):
                 self.datos()
         else:
             try:
-                dat=self.Seller.buscar(self.txtID.get())
-                self.lbl4.config(text="")
-                self.grid.insert("",END, text= str(dat[0]), values=(str(dat[1]),str(dat[2]),str(dat[3])))
+                datos = self.Seller.STab(self.txtID.get());
+                self.grid.heading("col2", text="Fecha", anchor=CENTER)
+                for row in datos:
+                 self.grid.insert("",END, text= row[0], values=(row[1],row[2],row[3]))
                 
             except:
                 self.lbl4.config(text="ID inexistente.")
                 self.datos()
+
+    def impri(self,v1,v2,v3,n,i,Nu):
+        
+        f= str("S1 - "+ str(Nu))
+        da=self.Seller.dateNow()
+        pdf = FPDF(orientation= 'P', unit= 'mm', format= 'A4')
+        pdf.add_page()
+        pdf.add_font('Popp', '', 'Poppins-Regular.ttf', uni=True)
+        pdf.image('F.png', x = 10, y = 10, w = 190, h = 280)
+        pdf.set_font('Popp', '', 15)
+
+        if len(f) > 8:
+            pdf.text(x=160, y=40, txt=f)
+        elif len(f) > 12:
+            pdf.text(x=150, y=40, txt=f)
+        else:
+            pdf.text(x=165, y=40, txt=f)
+            
+        pdf.text(x=68, y= 82, txt=n)
+        pdf.text(x=164, y= 125, txt=v1)
+        pdf.text(x=40, y= 125, txt=i)
+        pdf.text(x=97, y= 125, txt=n)
+        pdf.text(x=164, y= 141, txt=v2)
+        pdf.text(x=164, y= 157, txt=v3)
+        pdf.text(x=40, y= 157, txt=i)
+        pdf.text(x=97, y= 157, txt=n)
+        pdf.text(x=164, y= 230, txt=v3)
+        pdf.text(x=12, y= 62, txt=da)
+        self.Seller.insfa(i,n,da,v3)
+        t="./f/{}-{}.pdf".format(Nu,i)
+        pdf.output(t)
 
 
     def Val(self):
@@ -101,7 +134,22 @@ class Ventana(Frame):
         self.grid.insert("",END, text= str(vAc[0]), values=(str(vAc[1]),str(vAc[2]),str(nR)))
 
         self.Seller.modifica(vAc[1],str(nR))
+        self.Seller.insTab(vAc[1],str(nR))
+        try:
+            N=self.Seller.maxI()
+            a=list(N)
+            print(a)
+            v=int(a[0])+1
+            print(v)
+            self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),str(v))
+            
+        except:
+            self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),str(1))
+            
+        
         self.lbl4.config(text="Valor actualizado.")
+        #self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),)
+
         self.cBox()
 
                
@@ -123,7 +171,7 @@ class Ventana(Frame):
         self.txtID.focus()
         self.cont = 4
         pass
-    
+
     def bDelet(self):
         self.lbl4.config(text="")
         self.habili(2) 
@@ -143,9 +191,11 @@ class Ventana(Frame):
 
     def bSave(self): 
         self.clGrip()
+        self.grid.heading("col2", text="Nombre", anchor=CENTER)
         if self.cont ==1: #Add
             try:
                 self.Seller.inserta(self.txtID.get(),self.txtName.get(),self.txtValue.get())
+                self.Seller.newTable(self.txtID.get(),self.txtValue.get())
                 self.lbl4.config(text="")
                 self.cBox()
                 self.datos()
@@ -183,13 +233,13 @@ class Ventana(Frame):
         frame1.place(x=0,y=0,width=100, height=720)        
 
         self.btnAdd=Button(frame1,text="Añadir", command=self.bAdd, bg="#20292E", fg="white",relief=FLAT, )
-        self.btnAdd.place(x=10,y=140,width=80, height=30 )        
+        self.btnAdd.place(x=0,y=140,width=110, height=30 )        
         self.btnDelet=Button(frame1,text="Eliminar", command=self.bDelet, bg="#20292E", fg="white",relief=FLAT)
-        self.btnDelet.place(x=10,y=210,width=80, height=30)        
+        self.btnDelet.place(x=0,y=210,width=110, height=30)        
         self.btnShow=Button(frame1,text="Explorar", command=self.bShow, bg="#20292E", fg="white",relief=FLAT)
-        self.btnShow.place(x=10,y=280,width=80, height=30)
+        self.btnShow.place(x=0,y=280,width=110, height=30)
         self.btnChan=Button(frame1,text="Modificar", command=self.bChan, bg="#20292E", fg="white",relief=FLAT)
-        self.btnChan.place(x=10,y=650,width=80, height=30)    
+        self.btnChan.place(x=0,y=650,width=110, height=30)    
 
         frame2 = Frame(self,bg="#263238" )
         frame2.place(x=100,y=0,width=300, height=720)                        
