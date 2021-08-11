@@ -6,14 +6,12 @@ class Client:
     def __init__(self):
         self.cnn = mysql.connector.connect(host="localhost", user="root", 
         passwd="45237823", database="compradores")
-   
-
 
     def __str__(self):
         datos=self.consulta()        
         aux=""
-       
         return aux
+
     def dateNow(self):
         now = datetime.now()
         # dd/mm/YY H:M:S
@@ -37,75 +35,96 @@ class Client:
         cur.close()    
         return datos
 
-
-
-    def newTable (self,ID,Valor ):
+    def newTable (self,ID,Valor,des ):
         cur = self.cnn.cursor()
-        sql=''' CREATE TABLE `{}` (`#` INT NOT NULL AUTO_INCREMENT,`ID` INT NOT NULL, `Fecha` TEXT NOT NULL, `Valor` FLOAT NOT NULL,PRIMARY KEY (`#`), UNIQUE INDEX `#_UNIQUE` (`#` ASC) VISIBLE);'''.format(ID)
+        sql=''' CREATE TABLE `{}` (`#` INT NOT NULL AUTO_INCREMENT,`ID` INT NOT NULL, `Fecha` TEXT NOT NULL, `Valor` FLOAT NOT NULL,`Descripcion` TEXT,PRIMARY KEY (`#`), UNIQUE INDEX `#_UNIQUE` (`#` ASC) VISIBLE);'''.format(ID)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
         cur.close()
-        self.insTab(ID,Valor)
+        self.insTab(ID,Valor,des)
         return n
 
-    def consulta (self):
+    def consulta (self,s):
         cur = self.cnn.cursor()
-        cur.execute("SELECT * FROM s1")
+        sql = "SELECT * FROM {}".format(s)
+        cur.execute(sql)
         datos = cur.fetchall()
         cur.close()    
         return datos
-    def maxI (self):
+    def maxI (self,s):
+        if s == "sa":
+            cur = self.cnn.cursor()
+            sql= "select N from facturasa where N = (select MAX(N) from factura{}); ".format(s)
+            cur.execute(sql)
+            datos = cur.fetchone()
+            cur.close()    
+        if s == "sb":
+            cur = self.cnn.cursor()
+            sql= "select N from facturasb where N = (select MAX(N) from factura{}); ".format(s)
+            cur.execute(sql)
+            datos = cur.fetchone()
+            cur.close()    
+        return datos
+
+    def buscar (self, Id,s):
         cur = self.cnn.cursor()
-        sql= "select N from factura where N = (select MAX(N) from factura); "
+        sql= "SELECT * FROM {} WHERE N = {}".format(s,Id)
         cur.execute(sql)
         datos = cur.fetchone()
         cur.close()    
         return datos
 
-    def buscar (self, Id):
-        cur = self.cnn.cursor()
-        sql= "SELECT * FROM s1 WHERE ID = {}".format(Id)
-        cur.execute(sql)
-        datos = cur.fetchone()
-        cur.close()    
-        return datos
+    def insfa(self,ID,N,F,V,D,s):
 
-    def insfa(self,ID,N,F,V):
-        dt= str(self.dateNow())
-        cur = self.cnn.cursor()
-        sql='''INSERT INTO `factura` (`ID`,`Nombre`, `Fecha`,`Valor`) VALUES ('{}','{}', '{}','{}');'''.format(ID,N,F,V)
-        cur.execute(sql)
-        n=cur.rowcount
-        self.cnn.commit()    
-        cur.close()
+        if s == "sa":
+            cur = self.cnn.cursor()
+           # sql='''INSERT INTO `facturasa` (`ID`, `Nombre`, `Fecha`, `Valor`, `Descripcion`) VALUES ('1', 'asd', 'asds', '12', '456');'''
+            sql='''INSERT INTO `facturasa` (`ID`, `Nombre`, `Fecha`, `Valor`, `Descripcion`) VALUES ('{}','{}','{}','{}','{}');'''.format(ID,N,F,V,D)
+            cur.execute(sql)
+            n=cur.rowcount
+            self.cnn.commit()    
+            cur.close()
+
+        if s == "sb":
+            cur = self.cnn.cursor()
+            sql='''INSERT INTO `facturasb` (`ID`, `Nombre`, `Fecha`, `Valor`, `Descripcion`) VALUES ('{}','{}','{}','{}',{});'''.format(ID,N,F,V,D)
+            cur.execute(sql)
+            n=cur.rowcount
+            self.cnn.commit()    
+            cur.close()
+
+        else:
+            print("?")
+
+
         return n    
 
 
     
-    def insTab (self,ID, Valor ):
+    def insTab (self,ID, Valor,des ):
 
         dt= str(self.dateNow())
         cur = self.cnn.cursor()
-        sql='''INSERT INTO `{}` (`ID`,`Fecha`, `Valor`) VALUES ('{}','{}', '{}');'''.format(ID, ID, dt, Valor)
+        sql='''INSERT INTO `{}` (`ID`,`Fecha`, `Valor`, `Descripcion`) VALUES ('{}','{}', '{}', '{}');'''.format(ID, ID, dt, Valor,des)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n    
 
-    def inserta (self,ID, Nombre, Valor ):
+    def inserta (self,ID, Nombre, Valor,s,des ):
         cur = self.cnn.cursor()
-        sql='''insert into s1 (ID, Nombre, Valor) VALUES('{}', '{}', '{}')'''.format(ID, Nombre, Valor)
+        sql='''INSERT INTO `{}` (`ID`, `Nombre`, `Valor`, `Descrip`) VALUES ('{}', '{}', '{}', '{}')'''.format(s,ID, Nombre, Valor,des)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
         cur.close()
         return n    
 
-    def elimina (self,Id):
+    def elimina (self,Id,s):
         cur = self.cnn.cursor()
-        sql='''DELETE FROM s1 WHERE ID = {}'''.format(Id)
+        sql='''DELETE FROM {} WHERE ID = {}'''.format(s,Id)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    
@@ -113,10 +132,9 @@ class Client:
         self.DeTable(Id)
         return n   
 
-    def modifica (self, ID,Valor ):
+    def modifica (self, ID,Valor,s ):
         cur = self.cnn.cursor()
-        
-        sql='''UPDATE `s1` SET `Valor` = '{}' WHERE `ID`= {}'''.format(Valor,ID)
+        sql='''UPDATE `{}` SET `Valor` = '{}' WHERE `ID`= {}'''.format(s,Valor,ID)
         cur.execute(sql)
         n=cur.rowcount
         self.cnn.commit()    

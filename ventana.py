@@ -4,25 +4,28 @@ from tkinter import ttk
 from fpdf import FPDF
 from compradores import * 
 
-    
+
 
 class Ventana(Frame):
     
     Seller = Client()
-    cont = 0   
+    cont = 0  
+    So = ""
+     
     def __init__(self, master=None):
         
         super().__init__(master,width=1280, height=720)
         self.master = master
         self.pack()
         self.create_widgets()
-        self.datos()
+        self.bha(5)
         self.habili(5)
 
-    def datos(self):
-        datos = self.Seller.consulta()
+    def datos(self,k):
+        datos = self.Seller.consulta(k)
         for row in datos:
-            self.grid.insert("",END, text= row[0], values=(row[1],row[2],row[3]))
+            self.grid.insert("",END, text= row[0], values=(row[1],row[2],row[3],row[4]))
+
     def habilib(self,bn):
         if bn == 1:
             self.btnAdd.configure(bg="#263238",fg="white")
@@ -55,19 +58,34 @@ class Ventana(Frame):
             self.txtName.configure(state="normal")
             self.txtID.configure(state="normal")
             self.txtValue.configure(state="normal")
+            self.txtDes.configure(state="normal")
         elif bn == 2:
             self.txtName.configure(state="disabled")
             self.txtID.configure(state="normal")
             self.txtValue.configure(state="disabled")
+            self.txtDes.configure(state="disabled")
         elif bn ==3:
             self.txtName.configure(state="disabled")
             self.txtID.configure(state="normal")
             self.txtValue.configure(state="normal")
+            self.txtDes.configure(state="normal")
+                    
         else:
             self.txtName.configure(state="disabled")
             self.txtID.configure(state="disabled")
             self.txtValue.configure(state="disabled")
-
+    def bha(self,k):
+        if k == 1 :
+            self.btnAdd.configure(state="normal")
+            self.btnShow.configure(state="normal")
+            self.btnDelet.configure(state="normal")
+            self.btnChan.configure(state="normal")
+        else:
+            self.btnAdd.configure(state="disabled")
+            self.btnShow.configure(state="disabled")
+            self.btnDelet.configure(state="disabled")
+            self.btnChan.configure(state="disabled")
+            
     def clGrip(self):
         for i in self.grid.get_children():
             self.grid.delete(i)
@@ -76,31 +94,73 @@ class Ventana(Frame):
         self.txtName.delete(0,END)
         self.txtID.delete(0,END)
         self.txtValue.delete(0,END)
-
-    def Busc(self):
-        if self.txtID.get() == "":
-                self.datos()
-        else:
-            try:
-                datos = self.Seller.STab(self.txtID.get());
-                self.grid.heading("col2", text="Fecha", anchor=CENTER)
-                for row in datos:
-                 self.grid.insert("",END, text= row[0], values=(row[1],row[2],row[3]))
-                
-            except:
-                self.lbl4.config(text="ID inexistente.")
-                self.datos()
-
-    def impri(self,v1,v2,v3,n,i,Nu):
+        self.txtDes.delete(0,END)
+    def gripb (self):
+        self.grid.heading("#0", text="#", anchor=CENTER)
+        self.grid.heading("col1", text="ID", anchor=CENTER)
+        self.grid.heading("col2", text="Nombre", anchor=CENTER)
+        self.grid.heading("col3", text="Valor", anchor=CENTER)
+        self.grid.heading("col4", text="Descripcíon", anchor=CENTER)
         
-        f= str("S1 - "+ str(Nu))
+    def Busc(self):
+
+        val=list(self.txtID.get())
+        print(val)
+
+        if val[0] == "f":
+            self.f="factura"+self.So
+            
+            v=self.txtID.get()
+            self.vf=v.split("-")
+            print(self.vf)
+
+            if self.txtID.get() == "f":
+                
+                self.datos(self.f)
+                
+            else:
+                try:
+                    print(self.f)
+                    Fa = self.Seller.buscar(self.vf[1],self.f);
+
+                    self.grid.heading("#0", text="# Factura", anchor=CENTER)
+                    self.grid.heading("col1", text="ID ", anchor=CENTER)
+                    self.grid.heading("col2", text="Nombre", anchor=CENTER)
+                    self.grid.heading("col3", text="Fecha ", anchor=CENTER)
+                    self.grid.heading("col4", text="Valor / Descripcion", anchor=CENTER)
+                    
+
+                    self.grid.insert("",END, text= str(Fa[0]), values=(str(Fa[1]),str(Fa[2]),str(Fa[3]),str(Fa[4])))
+                    self.grid.insert("",END, text= str(""), values=(str(""),str(""),str(""),Fa[5]))
+                    print("6")
+                except:
+                    self.lbl4.config(text="ID inexistente.")
+                    self.datos(self.f)
+        else:
+            
+            if self.txtID.get() == "0":
+                self.datos(self.So)
+            else:
+                try:
+                    datos = self.Seller.STab(self.txtID.get());
+                    self.grid.heading("col2", text="Fecha", anchor=CENTER)
+                    for row in datos:
+                       self.grid.insert("",END, text= row[0], values=(row[1],row[2],row[3],row[4]))
+                    
+                except:
+                    self.lbl4.config(text="ID inexistente.")
+                    self.datos(self.So)
+
+    def impri(self,v1,v2,v3,n,i,Nu,d):
+        
+        f= str(self.So+ " - "+ str(Nu))
         da=self.Seller.dateNow()
         pdf = FPDF(orientation= 'P', unit= 'mm', format= 'A4')
         pdf.add_page()
         pdf.add_font('Popp', '', 'Poppins-Regular.ttf', uni=True)
         pdf.image('F.png', x = 10, y = 10, w = 190, h = 280)
         pdf.set_font('Popp', '', 15)
-
+        f1= str(self.So+ str(Nu))
         if len(f) > 8:
             pdf.text(x=160, y=40, txt=f)
         elif len(f) > 12:
@@ -118,33 +178,47 @@ class Ventana(Frame):
         pdf.text(x=97, y= 157, txt=n)
         pdf.text(x=164, y= 230, txt=v3)
         pdf.text(x=12, y= 62, txt=da)
-        self.Seller.insfa(i,n,da,v3)
-        t="./f/{}-{}.pdf".format(Nu,i)
+        
+        pdf.text(x=22, y= 242, txt="Descripcíon:")
+        pdf.text(x=21, y= 250, txt=d)
+        print("v")
+
+        print(self.So)
+        self.Seller.insfa(i,n,da,v3,d,self.So)
+        
+        t="./f/{}-{}.pdf".format(f1,i)
         pdf.output(t)
 
 
     def Val(self):
-        vAc=self.Seller.buscar(self.txtID.get())
-        #print(vAc)
+        vAc=self.Seller.buscar(self.txtID.get(),self.So)
         nV = self.txtValue.get()
         nR=str(float(vAc[3]) + float(nV))
+        desc = self.txtDes.get()
 
-        self.grid.insert("",END, text= str(vAc[0]), values=(str(vAc[1]),str(vAc[2]),str(vAc[3])))
-        self.grid.insert("",END, text= str(""), values=(str(""),str(""),str(nV)))
+        self.grid.insert("",END, text= str(vAc[0]), values=(str(vAc[1]),str(vAc[2]),str(vAc[3]),str(vAc[4])))
+        self.grid.insert("",END, text= str(""), values=(str(""),str(""),str(nV),desc))
         self.grid.insert("",END, text= str(vAc[0]), values=(str(vAc[1]),str(vAc[2]),str(nR)))
-
-        self.Seller.modifica(vAc[1],str(nR))
-        self.Seller.insTab(vAc[1],str(nR))
+        self.Seller.modifica(vAc[1],str(nR),self.So)
+        self.Seller.insTab(vAc[1],str(nR),desc)
+        
         try:
-            N=self.Seller.maxI()
-            a=list(N)
-            print(a)
-            v=int(a[0])+1
-            print(v)
-            self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),str(v))
+            N=self.Seller.maxI(self.So)
+            print(N)
+            if N == NONE:
+                v = 0
+            else:
+                a=list(N)
+                print(a)
+                v=int(a[0])+1
+                print(v)
+                    
+            
+            self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),str(v),desc)
+        
             
         except:
-            self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),str(1))
+            self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),str(1),desc)
             
         
         self.lbl4.config(text="Valor actualizado.")
@@ -152,7 +226,22 @@ class Ventana(Frame):
 
         self.cBox()
 
-               
+    def bSa(self):
+        self.clGrip()
+        self.So = "sa"
+        self.btnSa.configure(bg="#263238",fg="white")
+        self.btnSb.configure(bg="#20292E",fg="white")
+        self.datos(self.So)
+        self.bha(1)
+
+    def bSb(self):
+        self.clGrip()
+        self.So = "sb"
+        self.btnSb.configure(bg="#263238",fg="white")
+        self.btnSa.configure(bg="#20292E",fg="white")
+        self.datos(self.So)
+        self.bha(1)
+
     def bAdd(self):
         self.lbl4.config(text="")     
         self.habili(1)    
@@ -191,24 +280,28 @@ class Ventana(Frame):
 
     def bSave(self): 
         self.clGrip()
+        self.gripb()
         self.grid.heading("col2", text="Nombre", anchor=CENTER)
         if self.cont ==1: #Add
             try:
-                self.Seller.inserta(self.txtID.get(),self.txtName.get(),self.txtValue.get())
-                self.Seller.newTable(self.txtID.get(),self.txtValue.get())
+
+                self.Seller.inserta(self.txtID.get(),self.txtName.get(),self.txtValue.get(),self.So,self.txtDes.get())
+                self.Seller.newTable(self.txtID.get(),self.txtValue.get(),self.txtDes.get())
                 self.lbl4.config(text="")
                 self.cBox()
-                self.datos()
+                self.datos(self.So)
                 
             except:
                 self.lbl4.config(text="Valores invalidos.")
 
         elif self.cont ==2: #Delet
             try:
-                self.Seller.elimina(self.txtID.get())
+                print("1")
+                self.Seller.elimina(self.txtID.get(),self.So)
+                print("1")
                 self.lbl4.config(text="")
                 self.cBox()
-                self.datos()
+                self.datos(self.So)
 
             except:
                 self.lbl4.config(text="ID inexistente.")
@@ -239,10 +332,16 @@ class Ventana(Frame):
         self.btnShow=Button(frame1,text="Explorar", command=self.bShow, bg="#20292E", fg="white",relief=FLAT)
         self.btnShow.place(x=0,y=280,width=110, height=30)
         self.btnChan=Button(frame1,text="Modificar", command=self.bChan, bg="#20292E", fg="white",relief=FLAT)
-        self.btnChan.place(x=0,y=650,width=110, height=30)    
+        self.btnChan.place(x=0,y=350,width=110, height=30)    
+
+        self.btnSa=Button(frame1,text="Sa", command=self.bSa, bg="#20292E", fg="white",relief=FLAT)
+        self.btnSa.place(x=0,y=650,width=110, height=30)  
+        self.btnSb=Button(frame1,text="Sb", command=self.bSb, bg="#20292E", fg="white",relief=FLAT)
+        self.btnSb.place(x=0,y=680,width=110, height=30)  
+
 
         frame2 = Frame(self,bg="#263238" )
-        frame2.place(x=100,y=0,width=300, height=720)                        
+        frame2.place(x=100,y=0,width=1200, height=720)                        
         lbl1 = Label(frame2,text="ID: ",bg="#263238",fg="white")        
         lbl1.place(x=30,y=5+100)        
         self.txtID=Entry(frame2)
@@ -262,23 +361,31 @@ class Ventana(Frame):
         self.txtValue=Entry(frame2)
         self.txtValue.place(x=30,y=125+120,width=160, height=20)        
           
-        self.btnGuardar=Button(frame2,text="Guardar", command=self.bSave, bg="#05867B", fg="white",relief=FLAT)
+        self.btnGuardar =  Button(frame2,text="Guardar", command=self.bSave, bg="#05867B", fg="white",relief=FLAT)
         self.btnGuardar.place(x=70,y=160+200,width=60, height=30)        
        
+        lbl5 = Label(frame2,text="Descripción: ",bg="#263238",fg="white")
+        lbl5.place(x=120,y=670)        
+        self.txtDes=Entry(frame2)
+        self.txtDes.place(x=207,y=670,width=780, height=20)   
 
 
-        self.grid = ttk.Treeview(self, columns=("col1","col2","col3"))        
+
+
+        self.grid = ttk.Treeview(self, columns=("col1","col2","col3","col4"))        
         self.grid.column("#0",width=20)
         self.grid.column("col1",width=60, anchor=CENTER)
         self.grid.column("col2",width=100, anchor=CENTER)
         self.grid.column("col3",width=90, anchor=CENTER)
-        
+        self.grid.column("col4",width=100, anchor=CENTER)
+
         self.grid.heading("#0", text="#", anchor=CENTER)
         self.grid.heading("col1", text="ID", anchor=CENTER)
         self.grid.heading("col2", text="Nombre", anchor=CENTER)
         self.grid.heading("col3", text="Valor", anchor=CENTER)
-        
-        self.grid.place(x=310,y=0,width=970, height=720)
+        self.grid.heading("col4", text="Descripcíon", anchor=CENTER)
+
+        self.grid.place(x=310,y=0,width=970, height=650)
         
         
         
