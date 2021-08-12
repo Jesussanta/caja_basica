@@ -28,17 +28,17 @@ class Ventana(Frame):
 
     def habilib(self,bn):
         if bn == 1:
-            self.btnAdd.configure(bg="#263238",fg="white")
+            self.btnAdd.configure(bg="#2F3E45",fg="white")
             self.btnDelet.configure(bg="#20292E",fg="white")
             self.btnChan.configure(bg="#20292E",fg="white")
             self.btnShow.configure(bg="#20292E",fg="white")
         elif bn == 2:
-            self.btnDelet.configure(bg="#263238",fg="white")
+            self.btnDelet.configure(bg="#2F3E45",fg="white")
             self.btnAdd.configure(bg="#20292E",fg="white")
             self.btnChan.configure(bg="#20292E",fg="white")
             self.btnShow.configure(bg="#20292E",fg="white")
         elif bn == 3:
-            self.btnChan.configure(bg="#263238",fg="white")
+            self.btnChan.configure(bg="#2F3E45",fg="white")
             self.btnDelet.configure(bg="#20292E",fg="white")
             self.btnAdd.configure(bg="#20292E",fg="white")
             self.btnShow.configure(bg="#20292E",fg="white")
@@ -46,7 +46,7 @@ class Ventana(Frame):
             self.btnAdd.configure(bg="#20292E",fg="white")
             self.btnDelet.configure(bg="#20292E",fg="white")
             self.btnChan.configure(bg="#20292E",fg="white")
-            self.btnShow.configure(bg="#263238",fg="white")
+            self.btnShow.configure(bg="#2F3E45",fg="white")
         else:
             self.btnAdd.configure(bg="#20292E",fg="white")
             self.btnDelet.configure(bg="#20292E",fg="white")
@@ -121,7 +121,7 @@ class Ventana(Frame):
             else:
                 try:
                     print(self.f)
-                    Fa = self.Seller.buscar(self.vf[1],self.f);
+                    Fa = self.Seller.buscar(self.vf[1],self.f,1);
 
                     self.grid.heading("#0", text="# Factura", anchor=CENTER)
                     self.grid.heading("col1", text="ID ", anchor=CENTER)
@@ -180,8 +180,7 @@ class Ventana(Frame):
         pdf.text(x=12, y= 62, txt=da)
         
         pdf.text(x=22, y= 242, txt="Descripcíon:")
-        pdf.text(x=21, y= 250, txt=d)
-        print("v")
+        pdf.text(x=25, y= 250, txt=d)
 
         print(self.So)
         self.Seller.insfa(i,n,da,v3,d,self.So)
@@ -191,28 +190,28 @@ class Ventana(Frame):
 
 
     def Val(self):
-        vAc=self.Seller.buscar(self.txtID.get(),self.So)
+        
+        vAc=self.Seller.buscar(self.txtID.get(),self.So,2)
         nV = self.txtValue.get()
+        print(vAc)
         nR=str(float(vAc[3]) + float(nV))
         desc = self.txtDes.get()
 
         self.grid.insert("",END, text= str(vAc[0]), values=(str(vAc[1]),str(vAc[2]),str(vAc[3]),str(vAc[4])))
         self.grid.insert("",END, text= str(""), values=(str(""),str(""),str(nV),desc))
         self.grid.insert("",END, text= str(vAc[0]), values=(str(vAc[1]),str(vAc[2]),str(nR)))
+      
         self.Seller.modifica(vAc[1],str(nR),self.So)
         self.Seller.insTab(vAc[1],str(nR),desc)
         
         try:
             N=self.Seller.maxI(self.So)
-            print(N)
             if N == NONE:
                 v = 0
             else:
                 a=list(N)
                 print(a)
                 v=int(a[0])+1
-                print(v)
-                    
             
             self.impri(str(vAc[3]),str(nV),str(nR),str(vAc[2]),str(vAc[1]),str(v),desc)
         
@@ -229,7 +228,7 @@ class Ventana(Frame):
     def bSa(self):
         self.clGrip()
         self.So = "sa"
-        self.btnSa.configure(bg="#263238",fg="white")
+        self.btnSa.configure(bg="#2F3E45",fg="white")
         self.btnSb.configure(bg="#20292E",fg="white")
         self.datos(self.So)
         self.bha(1)
@@ -237,7 +236,7 @@ class Ventana(Frame):
     def bSb(self):
         self.clGrip()
         self.So = "sb"
-        self.btnSb.configure(bg="#263238",fg="white")
+        self.btnSb.configure(bg="#2F3E45",fg="white")
         self.btnSa.configure(bg="#20292E",fg="white")
         self.datos(self.So)
         self.bha(1)
@@ -340,21 +339,21 @@ class Ventana(Frame):
         self.btnSb.place(x=0,y=680,width=110, height=30)  
 
 
-        frame2 = Frame(self,bg="#263238" )
+        frame2 = Frame(self,bg="#2F3E45" )
         frame2.place(x=100,y=0,width=1200, height=720)                        
-        lbl1 = Label(frame2,text="ID: ",bg="#263238",fg="white")        
+        lbl1 = Label(frame2,text="ID: ",bg="#2F3E45",fg="white")        
         lbl1.place(x=30,y=5+100)        
         self.txtID=Entry(frame2)
         self.txtID.place(x=30,y=25+100,width=160, height=20)                
-        lbl2 = Label(frame2,text="Nombre: ",bg="#263238",fg="white")
+        lbl2 = Label(frame2,text="Nombre: ",bg="#2F3E45",fg="white")
 
         lbl2.place(x=30,y=55+110)        
         self.txtName=Entry(frame2)
         self.txtName.place(x=30,y=75+110,width=160, height=20)        
-        lbl3 = Label(frame2,text="Valor: ",bg="#263238",fg="white")
+        lbl3 = Label(frame2,text="Valor: ",bg="#2F3E45",fg="white")
         lbl3.place(x=30,y=105+120)        
     
-        self.lbl4 = Label(frame2,text="",bg="#263238",fg="white",font=( NORMAL, 11))
+        self.lbl4 = Label(frame2,text="",bg="#2F3E45",fg="white",font=( NORMAL, 11))
  
         self.lbl4.place(x=35,y=500)        
 
@@ -364,12 +363,10 @@ class Ventana(Frame):
         self.btnGuardar =  Button(frame2,text="Guardar", command=self.bSave, bg="#05867B", fg="white",relief=FLAT)
         self.btnGuardar.place(x=70,y=160+200,width=60, height=30)        
        
-        lbl5 = Label(frame2,text="Descripción: ",bg="#263238",fg="white")
+        lbl5 = Label(frame2,text="Descripción: ",bg="#2F3E45",fg="white")
         lbl5.place(x=120,y=670)        
         self.txtDes=Entry(frame2)
         self.txtDes.place(x=207,y=670,width=780, height=20)   
-
-
 
 
         self.grid = ttk.Treeview(self, columns=("col1","col2","col3","col4"))        

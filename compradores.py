@@ -55,24 +55,32 @@ class Client:
     def maxI (self,s):
         if s == "sa":
             cur = self.cnn.cursor()
-            sql= "select N from facturasa where N = (select MAX(N) from factura{}); ".format(s)
+            sql= "select N from facturasa where N = (select MAX(N) from facturasa); ".format(s)
             cur.execute(sql)
             datos = cur.fetchone()
             cur.close()    
         if s == "sb":
             cur = self.cnn.cursor()
-            sql= "select N from facturasb where N = (select MAX(N) from factura{}); ".format(s)
+            sql= "select N from facturasb where N = (select MAX(N) from facturasb); ".format(s)
             cur.execute(sql)
             datos = cur.fetchone()
             cur.close()    
         return datos
 
-    def buscar (self, Id,s):
-        cur = self.cnn.cursor()
-        sql= "SELECT * FROM {} WHERE N = {}".format(s,Id)
-        cur.execute(sql)
-        datos = cur.fetchone()
-        cur.close()    
+    def buscar (self, Id,s,k):
+        if k == 1:
+            cur = self.cnn.cursor()
+            sql= "SELECT * FROM {} WHERE N = {}".format(s,Id)
+            cur.execute(sql)
+            datos = cur.fetchone()
+            cur.close()    
+        else:
+            cur = self.cnn.cursor()
+            sql= "SELECT * FROM {} WHERE ID = {}".format(s,Id)
+            cur.execute(sql)
+            datos = cur.fetchone()
+            cur.close()    
+            
         return datos
 
     def insfa(self,ID,N,F,V,D,s):
@@ -93,9 +101,6 @@ class Client:
             n=cur.rowcount
             self.cnn.commit()    
             cur.close()
-
-        else:
-            print("?")
 
 
         return n    
